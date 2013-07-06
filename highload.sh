@@ -33,6 +33,9 @@ function SuspendOffender {
 #RETURN if VPS is in exclude list (match ^ctid, " ctid ", or ctid$)
 echo $exclude_vps | egrep -q "^$1\ |\ $1\ |\ $1$" && return
 
+#RETURN if lock file exists (migrating/backup)
+if [[ -f /vz/lock/${1}.lck ]]; then echo "Lock file detected, CT stop aborted"; cat /vz/lock/${1}.lck; return; fi
+
 #RETURN if uptime too low
 if [[ `vzctl exec $1 'cat /proc/uptime | cut -d. -f1'` -lt $safeuptime ]]; then echo "uptime is too low to reboot"; return; fi
 
