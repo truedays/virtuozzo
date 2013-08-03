@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# Must add this to root crontab, have custom awk scripts in place and adjust the USER VARIABLES
+
+### USER VARIABLES ###
+# Enter email address:
+mailto="root@EXAMPLE.com"
+# Set repeat delay 240=4hrs.
+repeatdelay=240
+###
+
+### root's crontab -e
+#*/15    *       *       *       *       /usr/local/sbin/raidstatus > /dev/null 2>&1
+
+###
+
+echo -e "$1" > /tmp/megarc.raidstatus # allow CLI debugging Example: raidstatus "TESTING"
+echo -e "\n\ndate: `date`\nuptime: `uptime`\n\n" >>/tmp/megarc.raidstatus
+/opt/MegaRAID/MegaCli/MegaCli64 -LDInfo -lALL -aALL| awk -f /opt/MegaRAID/MegaCli/ldanalysis.awk >>/tmp/megarc.raidstatus
+/opt/MegaRAID/MegaCli/MegaCli64 -PdList -aALL| awk -f /opt/MegaRAID/MegaCli/pdanalysis.awk >>/tmp/megarc.raidstatus
+
+if grep -Ev "^$|date:|uptime:|*: Online|*: Hotspare|*: Optimal|*: WriteBack" /tmp/megarc.raidstatus
+ then
+    if [[ -f /tmp/raidstatus.lck ]] # prevent repeat storm
+     then
+        if [[ "`cat /tmp/raidstatus.previous | grep -Ev 'uptime|date' | md5sum`" ==  "`cat /tmp/megarc.raidstatus | grep -Ev 'uptime|date' | md5sum`" ]]  # if repeating..
+         then
+          logger "/usr/local/sbin/raidstatus duplicate alert -- surpressing email alert"
+              find /tmp/raidstatus.lck -mmin +${repeatdelay} -delete # delete lock file if older than $repeatdelay
+         exit 12
+        fi
+    fi
+        echo "Warning: RAID status no longer optimal on $HOSTNAME `cat /tmp/megarc.raidstatus`" | mail -s"$HOSTNAME PROBLEM" ${mailto}
+        cp -v /tmp/megarc.raidstatus /tmp/raidstatus.previous
+        touch /tmp/raidstatus.lck
+fi
+#rm -f /tmp/megarc.raidstatus
+exit 0
+
