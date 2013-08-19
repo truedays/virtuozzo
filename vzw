@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Replaces vzw. Adds check for "Unknown HZ value! (24) Assume 100." Error -Ray 8/19/2013
+#
+
+for i in `vzlist -o veid -H| grep -v " 1$"`
+do 
+ RAM=`vzctl exec $i free -m|grep -v -E "Swap|total|buffers"|awk '{print $3}'`  #get current Ram usage in MB
+ LOAD=`vzctl exec $i uptime 2> /tmp/vzw.ray| sed 's/^.*average: *//; s/, *.*$//;'|sed 's/, [0-9.]*,.*$//;'|tr -s " "`  #get current 1min loadavg
+ echo -e "VPS $i -> \t RAM:" $RAM "MB \tLOAD: " $LOAD|grep -v "VPS 1 " 
+
+# look for HZ error which indicates maliciously replaced uptime binary
+ grep HZ /tmp/vzw.ray && (echo -n "Warning: ctid $i appears to be compromized"|egrep --color "Warn.*")
+done
+
+# cleanup
+[ -e /tmp/vzw.ray ] && rm /tmp/vzw.ray
