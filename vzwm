@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# A new take on vzw, sorted by RAM.
+# V.01 Ray
+vzlist $@ -o ctid,laverage,physpages -s physpages | awk '{mem=int($3/256);sum+=mem} { if (mem!=0) print $1" "$2" ",mem; if (mem==0) print "CTID\tLoad_Average\tMemory\n------- --------------- --------"} END {print "- Total: ",sum}'  | column -t
