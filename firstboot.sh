@@ -107,6 +107,7 @@ reboot
 thirdboot () {
 
 # reserved for furture need
+true # do nothing
 
 }
 
