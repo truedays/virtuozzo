@@ -7,7 +7,7 @@
 #
 
 lockfile=/root/.firstboot.lck
-initer=/tmp/rc.local
+initer=/etc/rc.local
 
 
 ## Steps separated by BASH functions for easier reading
