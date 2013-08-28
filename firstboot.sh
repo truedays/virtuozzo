@@ -69,6 +69,36 @@ sed -i 's/CEP=yes/CEP=no/' /etc/vz/vz.conf
 # Update everything
 yum update -y
 
+# get custom scripts
+cd /root
+mv /root/virtuozzo{,_safe} -v
+git clone https://github.com/truedays/virtuozzo.git
+cd /root/virtuozzo/lsi
+wget http://bare.i2host.net/lsi/raidstatus.tgz
+tar zxf raidstatus.tgz
+mv opt/MegaRAID/MegaCli/ldanalysis.awk /opt/MegaRAID/MegaCli/ldanalysis.awk
+mv opt/MegaRAID/MegaCli/pdanalysis.awk /opt/MegaRAID/MegaCli/pdanalysis.awk
+mv usr/local/sbin/raidstatus /usr/local/sbin/raidstatus
+chmod +x /usr/local/sbin/raidstatus
+
+chmod +x /root/virtuozzo/lsi/raidstatus /root/virtuozzo/rayfixslm /root/virtuozzo/highload.sh /root/virtuozzo/vzw /root/virtuozzo/mountedchk.sh
+
+cat << EOF >> /var/spool/cron/root
+15      */6     *       *       *       /usr/local/sbin/raidstatus > /dev/null 2>&1
+*/15    *       *       *       *       /root/virtuozzo/lsi/raidstatus > /dev/null 2>&1
+*/5     *       *       *       *       /root/virtuozzo/highload.sh
+# ray's vz license warning email 30 minutes before midnight 12/06/2012
+30      23      *       *       *       vzlicview|egrep -q "No licenses installed|ACTIVE" || vzlicview | mail -s "$HOSTNAME VZ license status warning (not ACTIVE)" support@eboundhost.com
+#reset priority of all tar/gzip/rsync
+*/5     *       *       *       *       /bin/ps aux | /bin/grep -v rsync.backup| /bin/grep -E "rsync|tar|gzip|updatedb|cpbackup|scheduled_backup" | /bin/grep -v -E "start|grep" | /bin/awk -F: '{print $1}' | /bin/sed 's/^[a-z0-9]* *//; s/ [0-9].*$//;' | /usr/bin/xargs -IZ /usr/bin/ionice -c2 -n6 -pZ > /dev/null 2>&1
+#New overloaders get restarted -kmh18JUL2012
+*/5     *       *       *       *       for i in `/usr/sbin/vzlist -o veid -H|grep -v -E "999|102"`; do LOAD=`/usr/sbin/vzctl exec $i /usr/bin/uptime | sed 's/^.*average: //; s/,.*//; s/\.[0-9]\{2\}$//;'`;if [ $LOAD -gt 10 ]; then TOPPROCS=`/usr/sbin/vzctl exec $i "export COLUMNS=300;/usr/bin/top -bcMn 1 | sed -e 's/ *$//g'"`;/usr/sbin/vzctl stop $i;sleep 300;/usr/sbin/vzctl start $i; echo -e "VE: $i LOAD: $LOAD\n\n$TOPPROCS" | /bin/mail -s"`hostname -a` restarted: $i" level2@eboundhost.com alerts@eboundhost.com ; fi; unset LOAD;unset TOPPROCS;done > /dev/null 2>&1
+#Stagger cPanel backups
+10      23      *       *       *       /root/cpbackup_cron_adj.sh > /dev/null 2>&1
+*/21    *       *       *       *       /root/virtuozzo/mountedchk.sh
+EOF
+
+
 reboot
 
 }
