@@ -15,6 +15,16 @@ initer=/tmp/rc.local
 # First boot
 firstboot () {
 
+# Create /vz partition
+parted /dev/sdb mklabel GPT y
+parted /dev/sdb unit MB mkpart primary ext4 1 100%
+mkfs -t ext4 /dev/sdb1
+tune2fs -i0 -c0 /dev/sdb1
+mkdir /vz
+echo -e "UUID=`ls -l /dev/disk/by-uuid/ | grep sdb1 | awk '{print $9}'` /vz\t\t\t  ext4\t  defaults\t  0 0" >> /etc/fstab
+mount /vz
+
+
 # Install Virtuozzo  ~4-5 minutes
 cd /root
 wget http://download.parallels.com/pvc/47/lin/vzinstall-linux-x86_64.bin
