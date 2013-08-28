@@ -8,8 +8,9 @@
 
 lockfile=/root/.firstboot.lck
 initer=/etc/rc.local
+logfile=/root/firstboot.sh.log
 
-
+exec >> $logfile 2>&1
 ## Steps separated by BASH functions for easier reading
 
 # First boot
@@ -23,6 +24,7 @@ tune2fs -i0 -c0 /dev/sdb1
 mkdir /vz
 echo -e "UUID=`ls -l /dev/disk/by-uuid/ | grep sdb1 | awk '{print $9}'` /vz\t\t\t  ext4\t  defaults\t  0 0" >> /etc/fstab
 mount /vz
+reboot
 
 
 # Install Virtuozzo  ~4-5 minutes
