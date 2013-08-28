@@ -31,6 +31,7 @@ wget http://download.parallels.com/pvc/47/lin/vzinstall-linux-x86_64.bin
 chmod 700 vzinstall-linux-x86_64.bin
 #./vzinstall-linux-x86_64.bin install --templates='full' --vzinstall-opts "--pva-agent --skip-reboot"
 ./vzinstall-linux-x86_64.bin install --templates='full' --vzinstall-opts "--skip-reboot"
+reboot
 
 }
 
@@ -47,11 +48,6 @@ cd pva-setup
 yum remove samba-winbind-clients -y
 ./pva-setup --install
 
-}
-
-# Third
-thirdboot () {
-
 # Add Tun support
 cat << EOF > /etc/init.d/addtun
 #!/bin/bash
@@ -62,14 +58,23 @@ ln -s /etc/init.d/addtun /etc/rc3.d/S10addtun
 # Add full CSF support
 cp -v /etc/sysconfig/vz{,_ORIG}
 sed -i 's/IPTABLES=.*"/IPTABLES="ipt_REJECT ipt_tos ipt_TOS ipt_limit ip_conntrack ip_conntrack_ftp ip_conntrack_netbios_ns ip_conntrack_pptp ip_nat_ftp ip_nat_pptp iptable_filter iptable_mangle iptable_nat ip_tables ipt_conntrack ipt_length ipt_LOG ipt_multiport ipt_owner ipt_recent ipt_state ipt_TCPMSS ipt_tcpmss ipt_ttl xt_connlimit ipt_REDIRECT"/' /etc/sysconfig/vz
-
 cp -v /etc/sysconfig/iptables-config{,_ORIG}
 sed -i 's/IPTABLES_MODULES=".*/IPTABLES_MODULES="ip_conntrack_netbios_ns"/' /etc/sysconfig/iptables-config
 
 #disable Customers Experience Program
 sed -i 's/CEP=yes/CEP=no/' /etc/vz/vz.conf
 
+# Update everything
 yum update -y
+
+reboot
+
+}
+
+# Third
+thirdboot () {
+
+# reserved for furture need
 
 }
 
@@ -109,4 +114,5 @@ case "`cat $lockfile`" in
 ;;
 esac
 
-(echo "rebooting in 10 seconds. Hit ctrl-c to abort"; sleep 11 && reboot)
+# reboot put in explicity wihtin functions
+#(echo "rebooting in 10 seconds. Hit ctrl-c to abort"; sleep 11 && reboot)
