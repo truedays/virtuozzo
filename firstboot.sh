@@ -15,18 +15,51 @@ initer=/tmp/rc.local
 # First boot
 firstboot () {
 
+# Install Virtuozzo  ~4-5 minutes
+cd /root
+wget http://download.parallels.com/pvc/47/lin/vzinstall-linux-x86_64.bin
+chmod 700 vzinstall-linux-x86_64.bin
+#./vzinstall-linux-x86_64.bin install --templates='full' --vzinstall-opts "--pva-agent --skip-reboot"
+./vzinstall-linux-x86_64.bin install --templates='full' --vzinstall-opts "--skip-reboot"
 
 }
 
 # Second
 secondboot () {
 
+# Install PVA ~1 minute (expects VZ to be running)
+cd /root
+wget http://download.pa.parallels.com/pva/pva-setup-deploy.x86_64
+chmod +x pva-setup-deploy.x86_64
+mkdir pva-setup
+./pva-setup-deploy.x86_64 -d pva-setup/ --extract
+cd pva-setup
+yum remove samba-winbind-clients -y
+./pva-setup --install
 
 }
 
 # Third
 thirdboot () {
 
+# Add Tun support
+cat << EOF > /etc/init.d/addtun
+#!/bin/bash
+/sbin/modprobe tun
+EOF
+ln -s /etc/init.d/addtun /etc/rc3.d/S10addtun
+
+# Add full CSF support
+cp -v /etc/sysconfig/vz{,_ORIG}
+sed -i 's/IPTABLES=.*"/IPTABLES="ipt_REJECT ipt_tos ipt_TOS ipt_limit ip_conntrack ip_conntrack_ftp ip_conntrack_netbios_ns ip_conntrack_pptp ip_nat_ftp ip_nat_pptp iptable_filter iptable_mangle iptable_nat ip_tables ipt_conntrack ipt_length ipt_LOG ipt_multiport ipt_owner ipt_recent ipt_state ipt_TCPMSS ipt_tcpmss ipt_ttl xt_connlimit ipt_REDIRECT"/' /etc/sysconfig/vz
+
+cp -v /etc/sysconfig/iptables-config{,_ORIG}
+sed -i 's/IPTABLES_MODULES=".*/IPTABLES_MODULES="ip_conntrack_netbios_ns"/' /etc/sysconfig/iptables-config
+
+#disable Customers Experience Program
+sed -i 's/CEP=yes/CEP=no/' /etc/vz/vz.conf
+
+yum update -y
 
 }
 
