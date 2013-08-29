@@ -15,6 +15,7 @@ exec >> $logfile 2>&1
 
 # First boot
 firstboot () {
+echo -e "\n\n ---\n $FUNCNAME\n ---\n\n"
 
 # Create /vz partition
 parted /dev/sdb mklabel GPT y
@@ -37,6 +38,7 @@ reboot
 
 # Second
 secondboot () {
+echo -e "\n\n ---\n $FUNCNAME\n ---\n\n"
 
 # Install PVA ~1 minute (expects VZ to be running)
 cd /root
@@ -106,6 +108,7 @@ reboot
 
 # Third
 thirdboot () {
+echo -e "\n\n ---\n $FUNCNAME\n ---\n\n"
 
 # reserved for furture need
 true # do nothing
