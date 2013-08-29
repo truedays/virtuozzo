@@ -96,6 +96,9 @@ cat << EOF >> /var/spool/cron/root
 */21    *       *       *       *       /root/virtuozzo/mountedchk.sh
 EOF
 
+# Undo VZ install's motd update
+mv -v /etc/motd{,.vz}
+cp -v /etc/motd.orig /etc/motd
 
 reboot
 
