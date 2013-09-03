@@ -43,7 +43,7 @@ if [[ `vzctl exec $1 'cat /proc/uptime | cut -d. -f1'` -lt $safeuptime ]]; then 
 cur_date=`date`
 cur_epoch=`date +%s`
 echo "$1 $cur_epoc $cur_time" >> $lockfile
-echo -en "$cur_date CTID: $1 LOAD: $(vzlist -Ho laverage $1)" | tee -a $logfile | tee -a $tmpfile
+echo -en "$cur_date CTID: $1 LOAD: $(vzlist -Ho laverage $1)\n" | tee -a $logfile | tee -a $tmpfile
 vzctl exec $1 '(echo -e "$HOSTNAME $(cat /proc/vz/veinfo_redir)\n______\n";export COLUMNS=200;/usr/bin/top -bcMn 1|head -n50;echo "+++end+++";echo)' >> $tmpfile
 cat $tmpfile | mail -s "HIGHLOAD: vps${1} restarted on $HOSTNAME" $mailto
 
