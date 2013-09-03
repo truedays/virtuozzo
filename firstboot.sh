@@ -110,8 +110,8 @@ reboot
 thirdboot () {
 echo -e "\n\n ---\n $FUNCNAME\n ---\n\n"
 
-# reserved for furture need
-true # do nothing
+# report any subsequent reboots
+echo '(uptime; echo; last -ai|head) | mail -s "$(hostname -s) Rebooted" level2@eboundhost.com' >> /etc/rc.local
 
 }
 
