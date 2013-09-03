@@ -10,11 +10,11 @@ lockfile=/root/.firstboot.lck
 initer=/etc/rc.local
 logfile=/root/firstboot.sh.log
 
-exec >> $logfile 2>&1
 ## Steps separated by BASH functions for easier reading
 
 # First boot
 firstboot () {
+exec >> $logfile 2>&1
 echo -e "\n\n ---\n $FUNCNAME\n ---\n\n"
 
 # Create /vz partition
@@ -38,6 +38,7 @@ reboot
 
 # Second
 secondboot () {
+exec >> $logfile 2>&1
 echo -e "\n\n ---\n $FUNCNAME\n ---\n\n"
 
 # Install PVA ~1 minute (expects VZ to be running)
@@ -108,6 +109,7 @@ reboot
 
 # Third
 thirdboot () {
+exec >> $logfile 2>&1
 echo -e "\n\n ---\n $FUNCNAME\n ---\n\n"
 
 # report any subsequent reboots
