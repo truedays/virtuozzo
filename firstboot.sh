@@ -115,6 +115,12 @@ echo -e "\n\n ---\n $FUNCNAME\n ---\n\n"
 # report any subsequent reboots
 echo '(uptime; echo; last -ai|head) | mail -s "$(hostname -s) Rebooted" level2@eboundhost.com' >> /etc/rc.local
 
+# updatedb before removing it from cron.daily
+echo "Updating mlocate database and disabling daily cron update"
+nodevs=$(< /proc/filesystems awk '$1 == "nodev" { print $2 }')
+/usr/bin/updatedb -f "$nodevs"
+rm -vf /etc/cron.daily/mlocate.cron
+
 }
 
 ### Begin code
