@@ -1,0 +1,12 @@
+#!/bin/bash 
+#ray's vz license warning email 120 minutes before midnight 12/06/2012
+#
+## Suggested Cron:
+## 0 22 * * * /root/virtuozzo/vzlictest
+
+vzlicview 2>&1 |grep -q ACTIVE || (vzlicview 2>&1 | mail -s "$HOSTNAME VZ License issue detected" support@eboundhost.com )
+
+## Possible output:
+# No licenses installed.
+## and
+# GRACE (when exceeding license)
