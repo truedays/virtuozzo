@@ -30,7 +30,7 @@ if grep -Ev "^$|date:|uptime:|*: Online|*: Hotspare|*: Optimal|*: WriteBack" /tm
          exit 12
         fi
     fi
-        echo "Warning: RAID status no longer optimal on $HOSTNAME `cat /tmp/megarc.raidstatus`" | mail -s"$HOSTNAME PROBLEM" ${mailto}
+        echo "Warning: RAID status no longer optimal on $HOSTNAME `cat /tmp/megarc.raidstatus;/opt/MegaRAID/MegaCli/MegaCli64 -AdpBbuCmd -GetBbuStatus -a0|strings`" | mail -s"$HOSTNAME PROBLEM" ${mailto}
         cp -v /tmp/megarc.raidstatus /tmp/raidstatus.previous
         touch /tmp/raidstatus.lck
 fi
