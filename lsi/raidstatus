@@ -16,8 +16,8 @@ repeatdelay=240
 
 echo -e "$1" > /tmp/megarc.raidstatus # allow CLI debugging Example: raidstatus "TESTING"
 echo -e "\n\ndate: `date`\nuptime: `uptime`\n\n" >>/tmp/megarc.raidstatus
-/opt/MegaRAID/MegaCli/MegaCli64 -LDInfo -lALL -aALL| awk -f /opt/MegaRAID/MegaCli/ldanalysis.awk >>/tmp/megarc.raidstatus
-/opt/MegaRAID/MegaCli/MegaCli64 -PdList -aALL| awk -f /opt/MegaRAID/MegaCli/pdanalysis.awk >>/tmp/megarc.raidstatus
+/opt/MegaRAID/MegaCli/MegaCli64 -LDInfo -lALL -aALL -nolog| awk -f /opt/MegaRAID/MegaCli/ldanalysis.awk >>/tmp/megarc.raidstatus
+/opt/MegaRAID/MegaCli/MegaCli64 -PdList -aALL -nolog| awk -f /opt/MegaRAID/MegaCli/pdanalysis.awk >>/tmp/megarc.raidstatus
 
 if grep -Ev "^$|date:|uptime:|*: Online|*: Hotspare|*: Optimal|*: WriteBack" /tmp/megarc.raidstatus
  then
