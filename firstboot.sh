@@ -105,7 +105,7 @@ cp -v /etc/motd.orig /etc/motd
 ## update /etc/issue
 # add BIG banner for ipmi thumbnail
 lynx --dump http://bare.i2host.net/cgi-bin/raysay?$(hostname -s) >> /etc/issue
-sed -i 's/\\/\\\\/' /etc/issue
+sed -i 's/\\/\\\\/g' /etc/issue
 # Added VZ release info to /etc/issue (assumes "Final)" in /etc/redhat-release)
 sed -i "s/^Kernel.*/`cat /etc/virtuozzo-release`\nKernel\n/" /etc/issue
 sed -i 's/Kernel.*/Kernel \\r/' /etc/issue
