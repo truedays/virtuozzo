@@ -107,10 +107,10 @@ cp -v /etc/motd.orig /etc/motd
 lynx --dump http://bare.i2host.net/cgi-bin/raysay?$(hostname -s) >> /etc/issue
 sed -i 's/\\/\\\\/g' /etc/issue
 # Added VZ release info to /etc/issue (assumes "Final)" in /etc/redhat-release)
-sed -i "s/^Kernel.*/`cat /etc/virtuozzo-release`\nKernel\n/" /etc/issue
+sed -i "s/^Kernel.*/`cat /etc/virtuozzo-release`\nKernel/" /etc/issue
 sed -i 's/Kernel.*/Kernel \\r/' /etc/issue
 # prevent console screen blanking
-echo -ne "\033[9;0]\n" >> /etc/issue
+echo -ne "\033[9;0]" >> /etc/issue
 
 reboot
 
