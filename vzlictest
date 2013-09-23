@@ -10,3 +10,31 @@ vzlicview 2>&1 |grep -q ACTIVE || (vzlicview 2>&1 | mail -s "$HOSTNAME VZ Licens
 # No licenses installed.
 ## and
 # GRACE (when exceeding license)
+
+#############################
+# Track Original VDS (and migrations) for future reference and OS template troubleshooting
+# 09/23/2013 Ray@eBh
+#
+
+function AddVDStrack {
+ # Add This server's hostname and MM/DD/YY date to __original_vds__
+ echo "$HOSTNAME $(date +%D)" >> /vz/private/${each}/__original_vds__
+}
+
+for each in `vzlist -Ho ctid | egrep -v "\ 1$"`
+do
+  if [ -f /vz/private/${each}/__original_vds__ ] 
+  then 
+      # File exist, but is this host the most recent [appended] entry?
+    if $(tail -n1 /vz/private/${each}/__original_vds__| grep -q $HOSTNAME)
+    then
+      true #do nothing
+    else
+      AddVDStrack
+    fi
+     
+  else
+     # No __original_vds__ file detected. Create one now..
+     AddVDStrack
+  fi
+done
