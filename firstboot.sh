@@ -74,6 +74,9 @@ yum update -y
 cd /root
 mv /root/virtuozzo{,_safe} -v
 git clone https://github.com/truedays/virtuozzo.git
+# chmod +x all bash script
+grep "bin/bash" /root/virtuozzo/* -l | xargs chmod -c +x
+
 cd /root/virtuozzo/lsi
 wget http://bare.i2host.net/lsi/raidstatus.tgz
 tar zxf raidstatus.tgz
