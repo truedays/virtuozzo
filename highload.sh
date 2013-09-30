@@ -43,7 +43,7 @@ if [[ `vzctl exec $1 'cat /proc/uptime | cut -d. -f1'` -lt $safeuptime ]]; then 
 cur_date=`date`
 cur_epoch=`date +%s`
 echo "$1 $cur_epoc $cur_time" >> $lockfile
-echo -en "$cur_date CTID: $1 LOAD: $(vzlist -Ho laverage $1)\n" | tee -a $logfile | tee -a $tmpfile
+echo -en "$cur_date CTID: $1 LOAD: $(/usr/sbin/vzlist -Ho laverage $1)\n" | tee -a $logfile | tee -a $tmpfile
 vzctl exec $1 '(echo -e "$HOSTNAME $(cat /proc/vz/veinfo_redir)\n______\n";export COLUMNS=200;/usr/bin/top -bcMn 1|head -n50;echo "+++end+++";echo)' >> $tmpfile
 cat $tmpfile | mail -s "HIGHLOAD: vps${1} restarted on $HOSTNAME" $mailto
 
@@ -51,14 +51,14 @@ cat $tmpfile | mail -s "HIGHLOAD: vps${1} restarted on $HOSTNAME" $mailto
 
 ####  Main forloop to check for high load
 # vzlist without header (-H) with columns ctid and load average. tr to simplify parsing. awk script to print CTIDs when load > max allowed.
-for each in `vzlist -Ho ctid,laverage | tr / " " | awk -v max1=$max1 -v max5=$max5 '{if ($2>max1||$3>max5)print $1}'`
+for each in `/usr/sbin/vzlist -Ho ctid,laverage | tr / " " | awk -v max1=$max1 -v max5=$max5 '{if ($2>max1||$3>max5)print $1}'`
 do
  SuspendOffender $each
 done
 
 
 #### Cleanup and restart any past due stopped containers
-for each in `vzlist -S -Ho ctid`
+for each in `/usr/sbin/vzlist -S -Ho ctid`
 do
 if [[ `grep -q $each $lockfile` ]]
  then
