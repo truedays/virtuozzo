@@ -6,10 +6,10 @@
 
 #### User Variables ####
 # Max one minute load:
-max1=10
+max1=7
 
 # Max five minute load:
-max5=7
+max5=6
 
 # Penalty time (time in second before CT will be eligible to restart)
 pentime=300
@@ -21,7 +21,7 @@ exclude_vps="1 998 999"
 # Minimum uptime before affected by highload reboot (seconds)
 safeuptime=120
 
-mailto="ray@eboundhost.com"
+mailto="alerts@eboundhost.com"
 tmpfile="/tmp/rayhighload.tmp"
 logfile="/var/log/vzhighload.log"
 lockfile="/tmp/rayhighload.lock"
@@ -37,16 +37,16 @@ echo $exclude_vps | egrep -q "^$1\ |\ $1\ |\ $1$" && return
 if [[ -f /vz/lock/${1}.lck ]]; then echo "Lock file detected, CT stop aborted"; cat /vz/lock/${1}.lck; return; fi
 
 #RETURN if uptime too low
-if [[ `vzctl exec $1 'cat /proc/uptime | cut -d. -f1'` -lt $safeuptime ]]; then echo "uptime is too low to reboot"; return; fi
+if [[ `/usr/sbin/vzctl exec $1 'cat /proc/uptime | cut -d. -f1'` -lt $safeuptime ]]; then echo "uptime is too low to reboot"; return; fi
 
 #log high load offender ctid and top processes to central log
 cur_date=`date`
 cur_epoch=`date +%s`
 echo "$1 $cur_epoch $cur_date" >> $lockfile
 echo -en "$cur_date CTID: $1 LOAD: $(/usr/sbin/vzlist -Ho laverage $1)\n" | tee -a $logfile | tee -a $tmpfile
-vzctl exec $1 '(echo -e "$HOSTNAME $(cat /proc/vz/veinfo_redir)\n______\n";export COLUMNS=200;/usr/bin/top -bcMn 1|head -n50;echo "+++end+++";echo)' >> $tmpfile
+/usr/sbin/vzctl exec $1 '(echo -e "$HOSTNAME $(cat /proc/vz/veinfo_redir)\n______\n";export COLUMNS=200;/usr/bin/top -bcMn 1|head -n50;echo "+++end+++";echo)' >> $tmpfile
 cat $tmpfile | mail -s "HIGHLOAD: vps${1} restarted on $HOSTNAME" $mailto
-
+/usr/sbin/vzctl stop $1
 }
 
 ####  Main forloop to check for high load
@@ -60,7 +60,7 @@ done
 #### Cleanup and restart any past due stopped containers
 for each in `/usr/sbin/vzlist -S -Ho ctid`
 do
-if [[ `grep -q $each $lockfile` ]]
+if (grep $each $lockfile)
  then
  echo stopped container matches entry in lock file
  # grep out only matching ctid (start of line, with space)
@@ -68,11 +68,13 @@ if [[ `grep -q $each $lockfile` ]]
  # get epoch suspend time from file (column 2)
  lockfileepoch=`echo $lockfileoutput| awk '{print $2}'`
 
- if [[ `echo $((\`date +%s\`-$lockfileepoch))` -gt $pentime ]]
+ if [ `echo "$(date +%s)-$lockfileepoch"|bc` -gt $pentime ]
   then
    # high load penalty time exceeded.. lets start them back up
-   vzctl start $each
+echo starting container now
+   /usr/sbin/vzctl start $each
    # remove ctid from stopped lockfile entry
+echo removing from $each from $lockfile
    sed -i /^$each\ /d $lockfile
  fi
 fi
