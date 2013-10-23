@@ -45,7 +45,7 @@ cur_epoch=`date +%s`
 echo "$1 $cur_epoch $cur_date" >> $lockfile
 echo -en "$cur_date CTID: $1 LOAD: $(/usr/sbin/vzlist -Ho laverage $1)\n" | tee -a $logfile | tee -a $tmpfile
 /usr/sbin/vzctl exec $1 '(echo -e "$HOSTNAME $(cat /proc/vz/veinfo_redir)\n______\n";export COLUMNS=200;/usr/bin/top -bcMn 1|head -n50;echo "+++end+++";echo)' >> $tmpfile
-cat $tmpfile | mail -s "HIGHLOAD: vps${1} restarted on $HOSTNAME" $mailto
+cat $tmpfile | mail -s "HIGHLOAD: vps ${1} restarted on $HOSTNAME" $mailto
 /usr/sbin/vzctl stop $1
 }
 
@@ -74,7 +74,7 @@ if (grep $each $lockfile)
 echo starting container now
    /usr/sbin/vzctl start $each
    # remove ctid from stopped lockfile entry
-echo removing from $each from $lockfile
+echo removing $each from $lockfile
    sed -i /^$each\ /d $lockfile
  fi
 fi
