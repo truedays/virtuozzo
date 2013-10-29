@@ -161,7 +161,10 @@ case "`cat $lockfile`" in
 3) # clean up
    echo "Virtuozzo installed."
    echo 4 > $lockfile
-   sed -i 's/.*firstboot.sh.*/#firstboot.sh # disabled automagically/g' $initer
+   #sed -i 's/.*firstboot.sh.*/#firstboot.sh # disabled automagically/g' $initer
+   ## rc.local seems to have been copied to other runlevels investigate this..
+   ## Fix: Comment out *all* occurrences of firstboot.sh in /etc/rc*
+   for each in `grep -Rl firstboot.sh /etc/*`; do sed -i 's/.*firstboot.sh.*/#firstboot.sh # disabled automagically/g' $each ; done
 ;;
 4) # prevent manual attempts of running this script
    echo "Virtuozzo already installed.  $0 can safely be deleted"
