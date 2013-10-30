@@ -4,7 +4,10 @@
 ## Suggested Cron:
 ## 0 22 * * * /root/virtuozzo/vzlictest
 
-/usr/sbin/vzlicview 2>&1 |grep -q ACTIVE || (vzlicview 2>&1 | mail -s "$HOSTNAME VZ License issue detected" support@eboundhost.com )
+## USER VARIABLES
+mailto=support@eboundhost.com
+
+/usr/sbin/vzlicview 2>&1 |grep -q ACTIVE || (vzlicview 2>&1 | mail -s "$HOSTNAME VZ License issue detected" ${mailto} )
 
 ## Possible output:
 # No licenses installed.
