@@ -25,7 +25,8 @@ mailto="alerts@eboundhost.com"
 tmpfile="/tmp/rayhighload.tmp"
 logfile="/var/log/vzhighload.log"
 lockfile="/tmp/rayhighload.lock"
-
+thisscript=${0}
+ShowTopProcess="/bin/ps axo pcpu,size,user,start_time,cmd | sort -r| sed 's/ SZ/MEM/'"
 
 
 #### Functions
@@ -44,8 +45,8 @@ cur_date=`date`
 cur_epoch=`date +%s`
 echo "$1 $cur_epoch $cur_date" >> $lockfile
 echo -en "$cur_date CTID: $1 LOAD: $(/usr/sbin/vzlist -Ho laverage $1)\n" | tee -a $logfile | tee -a $tmpfile
-/usr/sbin/vzctl exec $1 '(echo -e "$HOSTNAME $(cat /proc/vz/veinfo_redir)\n______\n";export COLUMNS=200;/usr/bin/top -bcMn 1|head -n50;echo "+++end+++";echo)' >> $tmpfile
-cat $tmpfile | mail -s "HIGHLOAD: vps ${1} restarted on $HOSTNAME" $mailto
+/usr/sbin/vzctl exec $1 '(echo -e "$HOSTNAME $(cat /proc/vz/veinfo_redir)\n\n\n"; $ShowTopProcess; echo END ${thisscript})' >> $tmpfile
+cat $tmpfile | mail -s "HIGHLOAD: vps ${1} restarted on $HOSTNAME per ${thisscript}" $mailto
 /usr/sbin/vzctl stop $1
 }
 
