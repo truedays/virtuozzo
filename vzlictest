@@ -7,7 +7,7 @@
 ## USER VARIABLES
 mailto=support@eboundhost.com
 
-/usr/sbin/vzlicview 2>&1 |grep -q ACTIVE || (vzlicview 2>&1 | mail -s "$HOSTNAME VZ License issue detected" ${mailto} )
+/usr/sbin/vzlicview 2>&1 |grep -q ACTIVE || (/usr/sbin/vzlicview 2>&1 | mail -s "$HOSTNAME VZ License issue detected" ${mailto} )
 
 ## Possible output:
 # No licenses installed.
