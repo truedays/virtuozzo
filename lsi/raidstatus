@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Must add this to root crontab, have custom awk scripts in place and adjust the USER VARIABLES
 
