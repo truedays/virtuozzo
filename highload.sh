@@ -57,7 +57,7 @@ do
  SuspendOffender $each
 done
 
-
+[ -e $lockfile ] && exit 0 # exit early if no lock file exists
 #### Cleanup and restart any past due stopped containers
 for each in `/usr/sbin/vzlist -S -Ho ctid`
 do
@@ -77,6 +77,7 @@ echo starting container now
    # remove ctid from stopped lockfile entry
 echo removing $each from $lockfile
    sed -i /^$each\ /d $lockfile
+   [ `cat $lockfile| wc -c` -lt 2 ] && rm -v $lockfile 
  fi
 fi
 done
