@@ -40,6 +40,9 @@ if [[ -f /vz/lock/${1}.lck ]]; then echo "Lock file detected, CT stop aborted"; 
 #RETURN if uptime too low
 if [[ `/usr/sbin/vzctl exec $1 'cat /proc/uptime | cut -d. -f1'` -lt $safeuptime ]]; then echo "uptime is too low to reboot"; return; fi
 
+# delete previous alert email/$tmpfile
+rm -f $tmpfile
+
 #log high load offender ctid and top processes to central log
 cur_date=`date`
 cur_epoch=`date +%s`
