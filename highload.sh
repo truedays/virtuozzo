@@ -57,7 +57,7 @@ do
  SuspendOffender $each
 done
 
-[ -e $lockfile ] && exit 0 # exit early if no lock file exists
+[ ! -e $lockfile ] && exit 11 # exit early if no lock file exists
 #### Cleanup and restart any past due stopped containers
 for each in `/usr/sbin/vzlist -S -Ho ctid`
 do
