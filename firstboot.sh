@@ -52,14 +52,13 @@ yum remove samba-winbind-clients -y
 ./pva-setup --install
 
 # Add Tun support
-if [ `/bin/egrep -q "6\.[0-9]" /etc/redhat-release` ]  # if release matches 6.x
+if /bin/egrep -q " 6\.[0-9]" /etc/redhat-release  # if release matches 6.x
  then # Add TUN support for Centos 6
 cat << EOF > /etc/sysconfig/modules/vztun.modules
 #!/bin/sh
 /sbin/modprobe tun
 EOF
 chmod +x /etc/sysconfig/modules/vztun.modules
-
 
  else # Add TUN support for Centos 4/5
 cat << EOF > /etc/init.d/addtun
