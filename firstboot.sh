@@ -103,7 +103,7 @@ cat << EOF >> /var/spool/cron/root
 */15    *       *       *       *       /root/virtuozzo/lsi/raidstatus > /dev/null 2>&1
 */5     *       *       *       *       /root/virtuozzo/highload.sh
 # ray's vz license warning email 30 minutes before midnight 12/06/2012
-30      23      *       *       *       vzlicview|egrep -q "No licenses installed|ACTIVE" || vzlicview | mail -s "$HOSTNAME VZ license status warning (not ACTIVE)" support@eboundhost.com
+0	20      *       *       *	/root/virtuozzo/vzlictest > /dev/null 2>&1
 #reset priority of all tar/gzip/rsync
 */5     *       *       *       *       /bin/ps aux | /bin/grep -v rsync.backup| /bin/grep -E "rsync|tar|gzip|updatedb|cpbackup|scheduled_backup" | /bin/grep -v -E "start|grep" | /bin/awk -F: '{print $1}' | /bin/sed 's/^[a-z0-9]* *//; s/ [0-9].*$//;' | /usr/bin/xargs -IZ /usr/bin/ionice -c2 -n6 -pZ > /dev/null 2>&1
 #New overloaders get restarted -kmh18JUL2012
