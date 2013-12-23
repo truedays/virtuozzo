@@ -99,7 +99,7 @@ chmod +x /usr/local/sbin/raidstatus
 chmod +x /root/virtuozzo/lsi/raidstatus /root/virtuozzo/rayfixslm /root/virtuozzo/highload.sh /root/virtuozzo/vzw /root/virtuozzo/mountedchk.sh
 
 cat << EOF >> /var/spool/cron/root
-15      */6     *       *       *       /usr/local/sbin/raidstatus > /dev/null 2>&1
+#15      */6     *       *       *       /usr/local/sbin/raidstatus > /dev/null 2>&1
 */15    *       *       *       *       /root/virtuozzo/lsi/raidstatus > /dev/null 2>&1
 */5     *       *       *       *       /root/virtuozzo/highload.sh
 # ray's vz license warning email 30 minutes before midnight 12/06/2012
