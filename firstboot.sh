@@ -86,7 +86,7 @@ mv /root/virtuozzo{,_safe} -v
 cd /opt/
 git clone https://github.com/truedays/virtuozzo.git
 mv -v /opt/virtuozzo /opt/ebh
-ln -s /root/virtuozzo /opt/ebh
+ln -s /opt/ebh /root/virtuozzo
 # chmod +x all bash script
 grep "bin/bash" /root/virtuozzo/* -l | xargs chmod -c +x
 
