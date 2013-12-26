@@ -81,12 +81,21 @@ sed -i 's/CEP=yes/CEP=no/' /etc/vz/vz.conf
 # Update everything
 yum update -y
 
-# get custom scripts
-cd /root
+# get custom scripts link to new /opt/ebh path
 mv /root/virtuozzo{,_safe} -v
+cd /opt/
 git clone https://github.com/truedays/virtuozzo.git
+mv -v /opt/virtuozzo /opt/ebh
+ln -s /root/virtuozzo /opt/ebh
 # chmod +x all bash script
 grep "bin/bash" /root/virtuozzo/* -l | xargs chmod -c +x
+
+# add /opt/ebh to root's PATH
+echo "PATH+=:/opt/ebh" >> /root/.bash_profile
+
+# Add alerts email aliases
+echo -e "alerts:\t\talerts@eboundhost.com" >> /etc/aliases
+/usr/bin/newaliases
 
 cd /root/virtuozzo/lsi
 wget http://bare.i2host.net/lsi/raidstatus.tgz
