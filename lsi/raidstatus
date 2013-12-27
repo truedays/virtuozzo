@@ -4,7 +4,7 @@
 
 ### USER VARIABLES ###
 # Enter email address:
-mailto="root@EXAMPLE.com"
+mailto="alerts"
 # Set repeat delay 240=4hrs.
 repeatdelay=240
 ###

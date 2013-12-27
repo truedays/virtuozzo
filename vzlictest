@@ -5,7 +5,7 @@
 ## 0 22 * * * /root/virtuozzo/vzlictest
 
 ## USER VARIABLES
-mailto=support@eboundhost.com
+mailto="alerts"
 
 /usr/sbin/vzlicview 2>&1 |grep -q ACTIVE || (/usr/sbin/vzlicview 2>&1 | mail -s "$HOSTNAME VZ License issue detected" ${mailto} )
 

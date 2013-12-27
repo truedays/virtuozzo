@@ -115,8 +115,6 @@ cat << EOF >> /var/spool/cron/root
 0	20      *       *       *	/root/virtuozzo/vzlictest > /dev/null 2>&1
 #reset priority of all tar/gzip/rsync
 */5     *       *       *       *       /bin/ps aux | /bin/grep -v rsync.backup| /bin/grep -E "rsync|tar|gzip|updatedb|cpbackup|scheduled_backup" | /bin/grep -v -E "start|grep" | /bin/awk -F: '{print $1}' | /bin/sed 's/^[a-z0-9]* *//; s/ [0-9].*$//;' | /usr/bin/xargs -IZ /usr/bin/ionice -c2 -n6 -pZ > /dev/null 2>&1
-#New overloaders get restarted -kmh18JUL2012
-#*/5     *       *       *       *       for i in `/usr/sbin/vzlist -o veid -H|grep -v -E "999|102"`; do LOAD=`/usr/sbin/vzctl exec $i /usr/bin/uptime | sed 's/^.*average: //; s/,.*//; s/\.[0-9]\{2\}$//;'`;if [ $LOAD -gt 10 ]; then TOPPROCS=`/usr/sbin/vzctl exec $i "export COLUMNS=300;/usr/bin/top -bcMn 1 | sed -e 's/ *$//g'"`;/usr/sbin/vzctl stop $i;sleep 300;/usr/sbin/vzctl start $i; echo -e "VE: $i LOAD: $LOAD\n\n$TOPPROCS" | /bin/mail -s"`hostname -a` restarted: $i" level2@eboundhost.com alerts@eboundhost.com ; fi; unset LOAD;unset TOPPROCS;done > /dev/null 2>&1
 #Stagger cPanel backups
 10      23      *       *       *       /root/cpbackup_cron_adj.sh > /dev/null 2>&1
 */21    *       *       *       *       /root/virtuozzo/mountedchk.sh
