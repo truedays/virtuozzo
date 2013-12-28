@@ -26,7 +26,7 @@ tmpfile="/tmp/rayhighload.tmp"
 logfile="/var/log/vzhighload.log"
 lockfile="/tmp/rayhighload.lock"
 thisscript=${0}
-ShowTopProcess="/bin/ps axo pcpu,size,user,start_time,cmd | sort -r| sed 's/ SZ/MEM/'"
+#ShowTopProcess="/bin/ps axo pcpu,size,user,start_time,cmd | sort -r| sed 's/ SZ/MEM/'"
 
 
 #### Functions
@@ -48,7 +48,16 @@ cur_date=`date`
 cur_epoch=`date +%s`
 echo "$1 $cur_epoch $cur_date" >> $lockfile
 echo -en "$cur_date CTID: $1 LOAD: $(/usr/sbin/vzlist -Ho laverage $1)\n" | tee -a $logfile | tee $tmpfile
-/usr/sbin/vzctl exec $1 '(echo -e "$HOSTNAME $(cat /proc/vz/veinfo_redir)\n\n\n"; $ShowTopProcess; echo END ${thisscript})' >> $tmpfile
+#/usr/sbin/vzctl exec $1 "(echo -e \"$HOSTNAME $(cat /proc/vz/veinfo_redir)\n\n\n\"; $ShowTopProcess; echo END ${thisscript})" >> $tmpfile
+/usr/sbin/vzctl exec $1 "(echo -e \"$HOSTNAME $(cat /proc/vz/veinfo_redir)\n\n\n\")">> $tmpfile
+
+echo "<pre>" >> $tmpfile
+echo -e "\nbegin ShowTopProcess\n"  >> $tmpfile
+echo $(ShowTopProcess) >> $tmpfile
+/usr/bin/vztop -E ${1} -bi -n1  >> $tmpfile
+echo -e "\nend ShowTopProcess\n"  >> $tmpfile
+
+echo -e "\n\nEND ${thisscript})" >> $tmpfile
 cat $tmpfile | mail -s "HIGHLOAD: vps ${1} restarted on $HOSTNAME per ${thisscript}" $mailto
 /usr/sbin/vzctl stop $1
 }
@@ -88,5 +97,6 @@ done
 ## mytest code:
 ##  vzlist -Ho ctid,laverage | tr / " " | awk -v max1=$max1 -v max5=$max5 '{if ($2>max1||$3>max5)print $1" "$2" "$3" max1:"max1" max5:"max5}'
 ##  echo 12345 10.01 5.55 5.55 | awk -v max1=$max1 -v max5=$max5 '{if ($2>max1||$3>max5)print $1}'
+
 
 
