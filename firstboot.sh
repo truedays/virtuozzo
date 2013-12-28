@@ -108,16 +108,13 @@ chmod +x /usr/local/sbin/raidstatus
 chmod +x /root/virtuozzo/lsi/raidstatus /root/virtuozzo/rayfixslm /root/virtuozzo/highload.sh /root/virtuozzo/vzw /root/virtuozzo/mountedchk.sh
 
 cat << EOF >> /var/spool/cron/root
-#15      */6     *       *       *       /usr/local/sbin/raidstatus > /dev/null 2>&1
-*/15    *       *       *       *       /root/virtuozzo/lsi/raidstatus > /dev/null 2>&1
-*/5     *       *       *       *       /root/virtuozzo/highload.sh
-# ray's vz license warning email 30 minutes before midnight 12/06/2012
-0	20      *       *       *	/root/virtuozzo/vzlictest > /dev/null 2>&1
+*/15    *       *       *       *       /opt/ebh/lsi/raidstatus
+*/5     *       *       *       *       /opt/ebh/highload.sh
+0	20      *       *       *	/opt/ebh/vzlictest
+10      23      *       *       *       /root/cpbackup_cron_adj.sh
+*/5	*       *       *       *       /opt/ebh/mountedchk.sh
 #reset priority of all tar/gzip/rsync
-*/5     *       *       *       *       /bin/ps aux | /bin/grep -v rsync.backup| /bin/grep -E "rsync|tar|gzip|updatedb|cpbackup|scheduled_backup" | /bin/grep -v -E "start|grep" | /bin/awk -F: '{print $1}' | /bin/sed 's/^[a-z0-9]* *//; s/ [0-9].*$//;' | /usr/bin/xargs -IZ /usr/bin/ionice -c2 -n6 -pZ > /dev/null 2>&1
-#Stagger cPanel backups
-10      23      *       *       *       /root/cpbackup_cron_adj.sh > /dev/null 2>&1
-*/21    *       *       *       *       /root/virtuozzo/mountedchk.sh
+*/5     *       *       *       *       /bin/ps aux | /bin/grep -v rsync.backup| /bin/grep -E "rrsync|tar|gzip|pkgacct|updatedb|cpbackup|scheduled_backup" | /bin/grep -v -E "start|grep" | /bin/awk -F: '{print }' | /bin/sed 's/^[a-z0-9]* *//; s/ [0-9].*$//;' | /usr/bin/xargs -IZ /usr/bin/ionice -c2 -n6 -pZ > /dev/null 2>&1
 EOF
 
 # Undo VZ install's motd update
