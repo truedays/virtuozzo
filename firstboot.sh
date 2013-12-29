@@ -147,7 +147,7 @@ echo "Updating mlocate database and disabling daily cron update"
 nodevs=$(< /proc/filesystems awk '$1 == "nodev" { print $2 }')
 /usr/bin/updatedb -f "$nodevs"
 rm -vf /etc/cron.daily/mlocate.cron
-
+chattr +i /var/lib/mlocate/mlocate.db
 }
 
 ### Begin code
