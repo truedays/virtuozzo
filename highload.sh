@@ -53,7 +53,6 @@ echo -en "$cur_date CTID: $1 LOAD: $(/usr/sbin/vzlist -Ho laverage $1)\n" | tee 
 
 echo "<pre>" >> $tmpfile
 echo -e "\nbegin ShowTopProcess\n"  >> $tmpfile
-echo $(ShowTopProcess) >> $tmpfile
 /usr/bin/vztop -E ${1} -bic -n1  >> $tmpfile
 echo -e "\nend ShowTopProcess\n"  >> $tmpfile
 
