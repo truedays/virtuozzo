@@ -88,10 +88,12 @@ echo starting container now
    # remove ctid from stopped lockfile entry
 echo removing $each from $lockfile
    sed -i /^$each\ /d $lockfile
-   [ `cat $lockfile| wc -c` -lt 2 ] && rm -v $lockfile 
  fi
 fi
 done
+
+# check if lockfile is so small (empty) to just remove it
+[ `cat $lockfile| wc -c` -lt 2 ] && rm -v $lockfile 
 
 ## mytest code:
 ##  vzlist -Ho ctid,laverage | tr / " " | awk -v max1=$max1 -v max5=$max5 '{if ($2>max1||$3>max5)print $1" "$2" "$3" max1:"max1" max5:"max5}'
