@@ -53,7 +53,7 @@ echo -en "$cur_date CTID: $1 LOAD: $(/usr/sbin/vzlist -Ho laverage $1)\n" | tee 
 
 echo "<pre>" >> $tmpfile
 echo -e "\nbegin ShowTopProcess\n"  >> $tmpfile
-/usr/bin/vztop -E ${1} -bic -n1  >> $tmpfile
+export COLUMNS=300; /usr/bin/vztop -E ${1} -bic -n1 | /usr/bin/fold -s -w 120 | /bin/sed '/^\ *$/d'  >> $tmpfile
 echo -e "\nend ShowTopProcess\n"  >> $tmpfile
 
 echo -e "\n___  Restart History  ___\n"
