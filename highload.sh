@@ -56,6 +56,9 @@ echo -e "\nbegin ShowTopProcess\n"  >> $tmpfile
 /usr/bin/vztop -E ${1} -bic -n1  >> $tmpfile
 echo -e "\nend ShowTopProcess\n"  >> $tmpfile
 
+echo -e "\n___  Restart History  ___\n"
+grep "CTID: ${1} LOAD" ${logfile} | tail -n20
+
 echo -e "\n\nEND ${thisscript}" >> $tmpfile
 cat $tmpfile | mail -s "HIGHLOAD: vps ${1} restarted on $HOSTNAME per ${thisscript}" $mailto
 /usr/sbin/vzctl stop $1
