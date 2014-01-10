@@ -56,7 +56,7 @@ echo -e "\nbegin ShowTopProcess\n"  >> $tmpfile
 /usr/bin/vztop -E ${1} -bic -n1  >> $tmpfile
 echo -e "\nend ShowTopProcess\n"  >> $tmpfile
 
-echo -e "\n\nEND ${thisscript})" >> $tmpfile
+echo -e "\n\nEND ${thisscript}" >> $tmpfile
 cat $tmpfile | mail -s "HIGHLOAD: vps ${1} restarted on $HOSTNAME per ${thisscript}" $mailto
 /usr/sbin/vzctl stop $1
 }
