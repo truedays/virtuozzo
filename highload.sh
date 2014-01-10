@@ -49,7 +49,7 @@ cur_epoch=`date +%s`
 echo "$1 $cur_epoch $cur_date" >> $lockfile
 echo -en "$cur_date CTID: $1 LOAD: $(/usr/sbin/vzlist -Ho laverage $1)\n" | tee -a $logfile | tee $tmpfile
 #/usr/sbin/vzctl exec $1 "(echo -e \"$HOSTNAME $(cat /proc/vz/veinfo_redir)\n\n\n\"; $ShowTopProcess; echo END ${thisscript})" >> $tmpfile
-/usr/sbin/vzctl exec $1 "(echo -e \"$HOSTNAME $(cat /proc/vz/veinfo_redir)\n\n\n\")">> $tmpfile
+/usr/sbin/vzctl exec $1 '(echo -e "$HOSTNAME $(cat /proc/vz/veinfo_redir)\n\n\n")'>> $tmpfile
 
 echo "<pre>" >> $tmpfile
 echo -e "\nbegin ShowTopProcess\n"  >> $tmpfile
