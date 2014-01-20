@@ -52,8 +52,10 @@ echo -en "$cur_date CTID: $1 LOAD: $(/usr/sbin/vzlist -Ho laverage $1)\n" | tee 
 /usr/sbin/vzctl exec $1 '(echo -e "$HOSTNAME $(cat /proc/vz/veinfo_redir)\n\n\n")'>> $tmpfile
 
 echo "<pre>" >> $tmpfile
+echo " HIGHLOAD VERSION 2014012001 " >> $tmpfile
 echo -e "\nbegin ShowTopProcess\n"  >> $tmpfile
-export COLUMNS=300; /usr/bin/vztop -E ${1} -bic -n1 | /usr/bin/fold -s -w 120 | /bin/sed '/^\ *$/d'  >> $tmpfile
+export COLUMNS=300; vzctl exec ${1} top -bic -n1 | /usr/bin/fold -s -w 120 | /bin/sed '/^\ *$/d'  >> $tmpfile
+#export COLUMNS=300; /usr/bin/vztop -E ${1} -bic -n1 | /usr/bin/fold -s -w 120 | /bin/sed '/^\ *$/d'  >> $tmpfile
 echo -e "\nend ShowTopProcess\n"  >> $tmpfile
 
 echo -e "\n___  Restart History  ___\n"
