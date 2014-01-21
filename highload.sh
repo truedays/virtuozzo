@@ -54,8 +54,8 @@ echo -en "$cur_date CTID: $1 LOAD: $(/usr/sbin/vzlist -Ho laverage $1)\n" | tee 
 echo "<pre>" >> $tmpfile
 echo " HIGHLOAD VERSION 2014012001 " >> $tmpfile
 echo -e "\nbegin ShowTopProcess\n"  >> $tmpfile
-vzctl exec ${1} "export COLUMNS=300; top -bc -n1 | /usr/bin/fold -s -w 120 | /bin/sed '/^\ *$/d'"
-#export COLUMNS=300; /usr/bin/vztop -E ${1} -bic -n1 | /usr/bin/fold -s -w 120 | /bin/sed '/^\ *$/d'  >> $tmpfile
+echo -e "uptime: $(vzctl exec ${1} uptime)\n\n"
+export COLUMNS=300; /usr/bin/vztop -E ${1} -bic -n1 | /usr/bin/fold -s -w 120 | /bin/sed '/^\ *$/d'  >> $tmpfile
 echo -e "\nend ShowTopProcess\n"  >> $tmpfile
 
 echo -e "\n___  Restart History  ___\n"
