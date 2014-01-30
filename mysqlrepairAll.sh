@@ -9,7 +9,7 @@
 for each in `vzlist -Ho ctid,diskspace -s diskspace | grep " 0$"| awk '{print $1}'`
  do
  echo "+++ Requesting mysql repair on $each.."
- /usr/sbin/vzctl exec $each 'su -c "mysqlcheck -uroot --auto-repair --check --all-databases | grep -v OK"'&
+ /usr/sbin/vzctl exec $each 'su -c "mysqlcheck -uroot --auto-repair --check --all-databases | tee -a /root/.mysql_repair.log"'
  PIDS+="$! "
  echo
 done
