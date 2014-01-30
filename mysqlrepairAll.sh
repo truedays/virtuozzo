@@ -15,6 +15,8 @@ for each in `vzlist -Ho ctid,diskspace -s diskspace | grep " 0$"| awk '{print $1
 done
 
 # echo dots while these $PIDS still exist (not well tested)
+echo "Tracking PIDs: $PIDS"
+echo
 while /bin/ps $PIDS >/dev/null 2>&1
  do 
  echo -n ".";
