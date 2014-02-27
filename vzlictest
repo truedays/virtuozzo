@@ -11,8 +11,10 @@ mailto="alerts"
 
 ## Possible output:
 # No licenses installed.
-## and
+## 
 # GRACE (when exceeding license)
+## and when HDDs are transplanted to new HW
+# status="INVALID" (Incorrect HWID)
 
 #############################
 # Track Original VDS (and migrations) for future reference and OS template troubleshooting
